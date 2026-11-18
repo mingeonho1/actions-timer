@@ -9,10 +9,11 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
+          cache: false  # no dependencies, so no go.sum to key a cache on
       - name: Vet
         run: go vet ./...
       - name: Test
@@ -27,10 +28,11 @@ jobs:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
+          cache: false  # no dependencies, so no go.sum to key a cache on
       - name: Measure own workflow durations
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
