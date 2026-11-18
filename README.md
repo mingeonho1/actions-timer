@@ -44,6 +44,10 @@ The same pipeline is defined for two CI systems:
 
 GitLab에는 이 저장소를 그대로 가져와(Import project → Repository by URL) 같은 코드로 `.gitlab-ci.yml`을 돌립니다.
 
+## Tutorial
+
+직접 고쳐 보며 CI/CD를 익히는 한국어 실습: [docs/tutorial](docs/tutorial/README.md)
+
 ## Layout
 
 | File | Role |
