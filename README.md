@@ -1,6 +1,8 @@
 # actions-timer
 
-[![CI](https://github.com/mingeonho1/actions-timer/actions/workflows/ci.yml/badge.svg)](https://github.com/mingeonho1/actions-timer/actions/workflows/ci.yml)
+[![GitHub Actions](https://github.com/mingeonho1/actions-timer/actions/workflows/ci.yml/badge.svg)](https://github.com/mingeonho1/actions-timer/actions/workflows/ci.yml)
+[![GitLab CI](https://gitlab.com/mingeonho1/actions-timer/badges/main/pipeline.svg)](https://gitlab.com/mingeonho1/actions-timer/-/pipelines)
+[![coverage](https://gitlab.com/mingeonho1/actions-timer/badges/main/coverage.svg)](https://gitlab.com/mingeonho1/actions-timer/-/pipelines)
 
 A tiny Go CLI that shows how long each GitHub Actions workflow takes — average, p50, p95, max — and its success rate.
 No dependencies beyond the Go standard library.
@@ -36,6 +38,11 @@ The same pipeline is defined for two CI systems:
 | test | `go vet`, `go test -race` | `go vet`, `go test -race` + coverage parsing |
 | build | single binary | cross-compiled linux/amd64 + darwin/arm64, kept as artifacts |
 | measure | runs the tool on this repo, writes the table to the job summary | runs the built artifact on this repo |
+
+- GitHub runs: <https://github.com/mingeonho1/actions-timer/actions>
+- GitLab pipelines (one-time import of this repo): <https://gitlab.com/mingeonho1/actions-timer/-/pipelines>
+
+GitLab에는 이 저장소를 그대로 가져와(Import project → Repository by URL) 같은 코드로 `.gitlab-ci.yml`을 돌립니다.
 
 ## Layout
 
