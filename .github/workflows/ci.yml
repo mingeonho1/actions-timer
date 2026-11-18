@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Vet
+        run: go vet ./...
+      - name: Test
+        run: go test -race -cover ./...
+      - name: Build
+        run: go build -o actions-timer .
+
+  # Dogfooding: measure this repo's own CI and show it on the run summary page.
+  # 자기 자신의 CI 소요시간을 재서 실행 요약 페이지에 표로 남긴다.
+  measure:
+    needs: test
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Measure own workflow durations
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          go run . -repo "$GITHUB_REPOSITORY" -limit 50 | tee -a "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"

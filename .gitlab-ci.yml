@@ -1,0 +1,43 @@
+# Same pipeline on GitLab CI: test -> build -> measure.
+# GitHub Actions(ci.yml)와 같은 흐름을 GitLab CI 문법으로 옮긴 것.
+image: golang:1.24
+
+stages:
+  - test
+  - build
+  - measure
+
+variables:
+  GOPATH: $CI_PROJECT_DIR/.go   # keep module cache inside the project so it can be cached
+
+cache:
+  key:
+    files: [go.mod]
+  paths: [.go/pkg/mod/]
+
+test:
+  stage: test
+  script:
+    - go vet ./...
+    - go test -race -coverprofile=coverage.out ./...
+    - go tool cover -func=coverage.out | tail -1
+  coverage: '/total:\s+\(statements\)\s+(\d+\.\d+)%/'
+
+build:
+  stage: build
+  script:
+    - CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o dist/actions-timer-linux-amd64 .
+    - CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o dist/actions-timer-darwin-arm64 .
+  artifacts:
+    paths: [dist/]
+    expire_in: 1 week
+
+# Runs the built binary against the GitHub mirror of this repo.
+# 빌드 산출물(artifact)을 받아 실제로 실행해 본다. 공개 저장소라 토큰 없이 동작.
+measure:
+  stage: measure
+  needs: [build]
+  script:
+    - ./dist/actions-timer-linux-amd64 -repo mingeonho1/actions-timer -limit 50
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
